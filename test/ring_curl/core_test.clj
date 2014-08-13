@@ -84,4 +84,7 @@
                     (subject/to-curl {} {:verbose true}) => (contains " -v "))
 
               (fact "silent"
-                    (subject/to-curl {} {:silent true}) => (contains " -s "))))
+                    (subject/to-curl {} {:silent true}) => (contains " -s "))
+
+              (fact "no proxy"
+                    (subject/to-curl {} {:no-proxy ["a" "b" "c"]}) => (contains " --noproxy \"a, b, c\" "))))

@@ -39,9 +39,14 @@
 (defn- silent [options]
   (if (:silent options) "-s"))
 
+(defn- no-proxy [options]
+  (if-let [hosts (not-empty (:no-proxy options))]
+    (str "--noproxy \"" (join ", " hosts) "\"")))
+
 (def all-options
   [silent
-   verbose])
+   verbose
+   no-proxy])
 
 (defn- apply-options [options]
   (join " " (keep identity (map (fn [f] (f options)) all-options))))
@@ -50,6 +55,7 @@
   "Converts the given ring request to a cURL command"
   ([request]
    (to-curl request {:verbose true
-                     :silent  false}))
+                     :silent  false
+                     :no-proxy []}))
   ([request options]
    (str "curl " (apply-options options) " " (method request) " " (headers request) " \"" (url request) "\"")))
