@@ -1,6 +1,6 @@
 (defproject ring-curl "0.1.0-SNAPSHOT"
-  :description "maps standard ring requests to cURL statments"
-  :url "http://example.com/FIXME"
+  :description "Converts ring requests to cURL commands"
+  :url "https://github.com/GentlemanHal/ring-curl"
   :license {:name "Eclipse Public License"
             :url "http://www.eclipse.org/legal/epl-v10.html"}
   :dependencies [[org.clojure/clojure "1.6.0"]
