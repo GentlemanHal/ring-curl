@@ -27,35 +27,40 @@
 (facts "adds the url"
        (facts "adds the scheme"
               (fact "with the correct :// seperator"
-                    (subject/url {:scheme :http}) => (has-prefix "http://")
-                    (subject/url {:scheme :https}) => (has-prefix "https://"))
+                    (subject/url {:scheme :http} false) => (has-prefix "http://")
+                    (subject/url {:scheme :https} false) => (has-prefix "https://"))
 
               (fact "defaults to http if missing"
-                    (subject/url {}) => (has-prefix "http://")))
+                    (subject/url {} false) => (has-prefix "http://")))
 
-       (fact "adds the host"
-             (subject/url {:server-name "some-server"}) => (contains "some-server"))
+       (facts "host"
+              (fact "gets added"
+                    (subject/url {:server-name "some-server"} false) => (contains "some-server"))
+
+              (fact "can be encoded"
+                    (subject/url {:server-name "server with spaces"} true) => (contains "server%20with%20spaces")))
 
        (fact "adds the port"
-             (subject/url {:server-port 11090}) => (contains ":11090"))
+             (subject/url {:server-port 11090} false) => (contains ":11090"))
 
        (fact "adds the path"
-             (subject/url {:uri "/some/path/to/a/resource"}) => (contains "/some/path/to/a/resource"))
+             (subject/url {:uri "/some/path/to/a/resource"} false) => (contains "/some/path/to/a/resource"))
 
        (facts "adds the query string"
               (fact "with the correct ? seperator"
-                    (subject/url {:query-string "a=1&b=2"}) => (contains "?a=1&b=2"))
+                    (subject/url {:query-string "a=1&b=2"} false) => (contains "?a=1&b=2"))
 
               (fact "doesn't add the ? seperator if missing"
-                    (subject/url {:query-string nil}) =not=> (contains "?")
-                    (subject/url {}) =not=> (contains "?")))
+                    (subject/url {:query-string nil} false) =not=> (contains "?")
+                    (subject/url {} false) =not=> (contains "?")))
 
        (fact "complete example"
              (subject/url {:scheme       :https
                            :server-name  "github.com"
                            :server-port  80
                            :uri          "/GentlemanHal/ring-curl"
-                           :query-string "page=2&per_page=100"}) => "https://github.com:80/GentlemanHal/ring-curl?page=2&per_page=100"))
+                           :query-string "page=2&per_page=100"}
+                          true) => "https://github.com:80/GentlemanHal/ring-curl?page=2&per_page=100"))
 
 (facts "adds headers"
        (fact "single header"
@@ -67,6 +72,13 @@
 
        (fact "headers with no value are added with a semi-colon"
              (subject/headers {:headers {"x-custom-header" nil}}) => "-H \"X-Custom-Header;\""))
+
+(facts "adds data"
+       (fact "strings get added as is"
+             (subject/data {:body "a string body"}) => "-d \"a string body\"")
+
+       (fact "maps get converted to json"
+             (subject/data {:body {:foo "bar"}}) => "-d \"{\\\"foo\\\":\\\"bar\\\"}\""))
 
 (facts "curl"
        (fact "simple example with default options"
