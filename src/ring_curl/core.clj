@@ -1,8 +1,7 @@
 (ns ring-curl.core
   (:require [clojure.string :refer [upper-case blank? join escape]]
             [camel-snake-kebab.core :refer [->HTTP-Header-Case]]
-            [clojure.data.json :as json]
-            [ring-curl.encoding :as encode]))
+            [clojure.data.json :as json]))
 
 (defn method [request]
   (let [request-method (:request-method request)]
@@ -12,24 +11,22 @@
   (let [s (:scheme request)]
     (str (if (nil? s) "http" (name s)) "://")))
 
-(defn- server-name [request encode]
-  (if encode
-    (encode/server-name (:server-name request))
-    (:server-name request)))
+(defn- server-name [request]
+    (:server-name request))
 
 (defn- port [request]
   (str ":" (:server-port request)))
 
 (defn- path [request]
-  (:uri request))
+    (:uri request))
 
 (defn- query-string [request]
   (let [qs (:query-string request)]
     (if-not (blank? qs)
       (str "?" qs))))
 
-(defn url [request encode]
-  (str (scheme request) (server-name request encode) (port request) (path request) (query-string request)))
+(defn url [request]
+  (str (scheme request) (server-name request) (port request) (path request) (query-string request)))
 
 (defn- map-header [[k v]]
   (str "-H \"" (->HTTP-Header-Case k) (if (nil? v) ";" (str ": " v)) "\""))
@@ -72,4 +69,4 @@
                      :silent   false
                      :no-proxy []}))
   ([request options]
-   (str "curl " (apply-options options) " " (method request) " " (headers request) " \"" (url request false) "\"")))
+   (str "curl " (apply-options options) " " (method request) " " (headers request) " \"" (url request) "\"")))
