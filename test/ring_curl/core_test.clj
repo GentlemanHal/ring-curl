@@ -36,10 +36,13 @@
        (facts "adds the host"
               (subject/url {:server-name "some-server"}) => (contains "some-server"))
 
+       (facts "adds the port"
+              (fact "with the correct : seperator"
+                    (subject/url {:server-port 11090}) => (contains ":11090"))
 
-
-       (fact "adds the port"
-             (subject/url {:server-port 11090}) => (contains ":11090"))
+              (fact "doesn't add the : seperator if missing"
+                    (subject/url {:server-name "server-name" :server-port nil}) =not=> (contains "server-name:")
+                    (subject/url {:server-name "server-name"}) =not=> (contains "server-name:")))
 
        (fact "adds the path"
              (subject/url {:uri "/some/path/to/a/resource"}) => (contains "/some/path/to/a/resource"))

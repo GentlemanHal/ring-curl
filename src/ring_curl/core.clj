@@ -15,7 +15,9 @@
     (:server-name request))
 
 (defn- port [request]
-  (str ":" (:server-port request)))
+  (let [port (:server-port request)]
+    (if-not (nil? port)
+      (str ":" port))))
 
 (defn- path [request]
     (:uri request))
