@@ -59,11 +59,15 @@
 (defn- progress-bar [options]
   (if (:progress-bar options) "-#"))
 
+(defn- insecure [options]
+  (if (:insecure options) "-k"))
+
 (def all-options
   [silent
    verbose
    no-proxy
-   progress-bar])
+   progress-bar
+   insecure])
 
 (defn- apply-options [options]
   (join " " (keep identity (map (fn [f] (f options)) all-options))))
@@ -74,6 +78,7 @@
    (to-curl request {:verbose  true
                      :silent   false
                      :no-proxy []
-                     :progress-bar false}))
+                     :progress-bar false
+                     :insecure false}))
   ([request options]
    (str "curl " (apply-options options) " " (method request) " " (headers request) " \"" (url request) "\"")))
