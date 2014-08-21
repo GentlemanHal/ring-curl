@@ -12,7 +12,7 @@
     (str (if (nil? s) "http" (name s)) "://")))
 
 (defn- server-name [request]
-    (:server-name request))
+  (:server-name request))
 
 (defn- port [request]
   (let [port (:server-port request)]
@@ -20,7 +20,7 @@
       (str ":" port))))
 
 (defn- path [request]
-    (:uri request))
+  (:uri request))
 
 (defn- query-string [request]
   (let [qs (:query-string request)]
@@ -47,20 +47,20 @@
          "\"")))
 
 (defn- verbose [options]
-  (if (:verbose options) "-v"))
+  (if (:verbose? options) "-v"))
 
 (defn- silent [options]
-  (if (:silent options) "-s"))
+  (if (:silent? options) "-s"))
 
 (defn- no-proxy [options]
   (if-let [hosts (not-empty (:no-proxy options))]
     (str "--noproxy \"" (join ", " hosts) "\"")))
 
 (defn- progress-bar [options]
-  (if (:progress-bar options) "-#"))
+  (if (:progress-bar? options) "-#"))
 
 (defn- insecure [options]
-  (if (:insecure options) "-k"))
+  (if (:insecure? options) "-k"))
 
 (def all-options
   [silent
@@ -75,10 +75,10 @@
 (defn to-curl
   "Converts the given ring request to a cURL command"
   ([request]
-   (to-curl request {:verbose  true
-                     :silent   false
-                     :no-proxy []
-                     :progress-bar false
-                     :insecure false}))
+   (to-curl request {:verbose?      true
+                     :silent?       false
+                     :no-proxy      []
+                     :progress-bar? false
+                     :insecure?     false}))
   ([request options]
    (str "curl " (apply-options options) " " (method request) " " (headers request) " \"" (url request) "\"")))

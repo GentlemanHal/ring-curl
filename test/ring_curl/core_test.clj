@@ -93,16 +93,16 @@
 
        (facts "options"
               (fact "verbose"
-                    (subject/to-curl {} {:verbose true}) => (contains " -v "))
+                    (subject/to-curl {} {:verbose? true}) => (contains " -v "))
 
               (fact "silent"
-                    (subject/to-curl {} {:silent true}) => (contains " -s "))
+                    (subject/to-curl {} {:silent? true}) => (contains " -s "))
 
               (fact "no proxy"
                     (subject/to-curl {} {:no-proxy ["a" "b" "c"]}) => (contains " --noproxy \"a, b, c\" "))
 
               (fact "progress bar"
-                    (subject/to-curl {} {:progress-bar true}) => (contains " -# "))
+                    (subject/to-curl {} {:progress-bar? true}) => (contains " -# "))
 
               (fact "insecure"
-                    (subject/to-curl {} {:insecure true}) => (contains " -k "))))
+                    (subject/to-curl {} {:insecure? true}) => (contains " -k "))))
