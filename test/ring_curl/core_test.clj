@@ -1,6 +1,6 @@
 (ns ring-curl.core-test
-  (:use midje.sweet)
-  (:require [ring-curl.core :as subject]))
+  (:require [midje.sweet :refer :all]
+            [ring-curl.core :as subject]))
 
 ;The standard keys are:
 ;
