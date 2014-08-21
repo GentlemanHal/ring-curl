@@ -56,10 +56,14 @@
   (if-let [hosts (not-empty (:no-proxy options))]
     (str "--noproxy \"" (join ", " hosts) "\"")))
 
+(defn- progress-bar [options]
+  (if (:progress-bar options) "-#"))
+
 (def all-options
   [silent
    verbose
-   no-proxy])
+   no-proxy
+   progress-bar])
 
 (defn- apply-options [options]
   (join " " (keep identity (map (fn [f] (f options)) all-options))))
@@ -69,6 +73,7 @@
   ([request]
    (to-curl request {:verbose  true
                      :silent   false
-                     :no-proxy []}))
+                     :no-proxy []
+                     :progress-bar false}))
   ([request options]
    (str "curl " (apply-options options) " " (method request) " " (headers request) " \"" (url request) "\"")))

@@ -99,4 +99,7 @@
                     (subject/to-curl {} {:silent true}) => (contains " -s "))
 
               (fact "no proxy"
-                    (subject/to-curl {} {:no-proxy ["a" "b" "c"]}) => (contains " --noproxy \"a, b, c\" "))))
+                    (subject/to-curl {} {:no-proxy ["a" "b" "c"]}) => (contains " --noproxy \"a, b, c\" "))
+
+              (fact "progress bar"
+                    (subject/to-curl {} {:progress-bar true}) => (contains " -# "))))
