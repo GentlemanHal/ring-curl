@@ -72,13 +72,16 @@
 (defn- apply-options [options]
   (join " " (keep identity (map (fn [f] (f options)) all-options))))
 
+(def default-options
+  {:verbose?      true
+   :silent?       false
+   :no-proxy      []
+   :progress-bar? false
+   :insecure?     false})
+
 (defn to-curl
   "Converts the given ring request to a cURL command"
   ([request]
-   (to-curl request {:verbose?      true
-                     :silent?       false
-                     :no-proxy      []
-                     :progress-bar? false
-                     :insecure?     false}))
+   (to-curl request default-options))
   ([request options]
    (str "curl " (apply-options options) " " (method request) " " (headers request) " \"" (url request) "\"")))

@@ -1,19 +1,25 @@
-(ns ring-curl.clj-http)
+(ns ring-curl.clj-http
+  (:require [clj-http.client :refer :all])
+  (:refer-clojure :exclude [get]))
 
-(defn- header [request key]
-  (if-let [value (get request key)]
-    (merge-with merge request {:headers {(name key) value}})
-    request))
+(def middleware
+  [wrap-query-params
+   wrap-basic-auth
+   wrap-oauth
+   wrap-user-info
+   wrap-url
+   wrap-input-coercion
+   wrap-accept
+   wrap-accept-encoding
+   wrap-content-type
+   wrap-form-params
+   wrap-nested-params
+   wrap-method])
 
-(defn- method [request]
-  (if-let [value (:method request)]
-    (merge request {:request-method value})
-    request))
-
-(defn convert [request]
-  (-> request
-      (header :content-type)
-      (header :content-length)
-      (header :accept-encoding)
-      (header :accept)
-      method))
+(defn convert
+  "Converts the given clj-http request to a ring request by calling some of the default clj-http middleware."
+  [request]
+  (reduce (fn [request middleware-fn]
+            ((middleware-fn (fn [x] x)) request))
+          request
+          middleware))
