@@ -105,4 +105,7 @@
                     (subject/to-curl {} {:progress-bar? true}) => (contains " -# "))
 
               (fact "insecure"
-                    (subject/to-curl {} {:insecure? true}) => (contains " -k "))))
+                    (subject/to-curl {} {:insecure? true}) => (contains " -k "))
+
+              (fact "connection timeout"
+                    (subject/to-curl {} {:conn-timeout 1000}) => (contains " --connect-timeout 1000 "))))
