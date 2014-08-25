@@ -95,8 +95,11 @@
               (fact "verbose"
                     (subject/to-curl {} {:verbose? true}) => (contains " -v "))
 
+              (fact "very silent"
+                    (subject/to-curl {} {:very-silent? true}) => (contains " -s "))
+
               (fact "silent"
-                    (subject/to-curl {} {:silent? true}) => (contains " -s "))
+                    (subject/to-curl {} {:silent? true}) => (contains " -s -S "))
 
               (fact "no proxy"
                     (subject/to-curl {} {:no-proxy ["a" "b" "c"]}) => (contains " --noproxy \"a, b, c\" "))
@@ -111,4 +114,13 @@
                     (subject/to-curl {} {:connect-timeout 60}) => (contains " --connect-timeout 60 "))
 
               (fact "max time"
-                    (subject/to-curl {} {:max-time 120}) => (contains " -m 120 "))))
+                    (subject/to-curl {} {:max-time 120}) => (contains " -m 120 "))
+
+              (fact "no-buffer"
+                    (subject/to-curl {} {:no-buffer? true}) => (contains " -N "))
+
+              (fact "output"
+                    (subject/to-curl {} {:output "some-file.txt"}) => (contains " -o \"some-file.txt\" "))
+
+              (fact "retry"
+                    (subject/to-curl {} {:retry 3}) => (contains " --retry 3 "))))

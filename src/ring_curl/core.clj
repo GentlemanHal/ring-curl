@@ -49,8 +49,11 @@
 (defn- verbose [options]
   (if (:verbose? options) "-v"))
 
+(defn- very-silent [options]
+  (if (:very-silent? options) "-s"))
+
 (defn- silent [options]
-  (if (:silent? options) "-s"))
+  (if (:silent? options) "-s -S"))
 
 (defn- no-proxy [options]
   (if-let [hosts (not-empty (:no-proxy options))]
@@ -63,29 +66,42 @@
   (if (:insecure? options) "-k"))
 
 (defn- connect-timeout [options]
-  (if-let [timeout (:connect-timeout options)] (str "--connect-timeout " timeout)))
+  (if-let [timeout (:connect-timeout options)]
+    (str "--connect-timeout " timeout)))
 
 (defn- max-time [options]
-  (if-let [timeout (:max-time options)] (str "-m " timeout)))
+  (if-let [timeout (:max-time options)]
+    (str "-m " timeout)))
+
+(defn- no-buffer [options]
+  (if (:no-buffer? options) "-N"))
+
+(defn- output [options]
+  (if-let [file (:output options)]
+    (str "-o \"" file "\"")))
+
+(defn- retry [options]
+  (if-let [val (:retry options)]
+    (str "--retry " val)))
 
 (def all-options
-  [silent
+  [very-silent
+   silent
    verbose
    no-proxy
    progress-bar
    insecure
    connect-timeout
-   max-time])
+   max-time
+   no-buffer
+   output
+   retry])
 
 (defn- apply-options [options]
   (join " " (keep identity (map (fn [f] (f options)) all-options))))
 
 (def default-options
-  {:verbose?      true
-   :silent?       false
-   :no-proxy      []
-   :progress-bar? false
-   :insecure?     false})
+  {:verbose? true})
 
 (defn to-curl
   "Converts the given ring request to a cURL command"
