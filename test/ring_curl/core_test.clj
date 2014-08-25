@@ -108,4 +108,7 @@
                     (subject/to-curl {} {:insecure? true}) => (contains " -k "))
 
               (fact "connection timeout"
-                    (subject/to-curl {} {:conn-timeout 1000}) => (contains " --connect-timeout 1000 "))))
+                    (subject/to-curl {} {:connect-timeout 60}) => (contains " --connect-timeout 60 "))
+
+              (fact "max time"
+                    (subject/to-curl {} {:max-time 120}) => (contains " -m 120 "))))

@@ -63,7 +63,10 @@
   (if (:insecure? options) "-k"))
 
 (defn- connect-timeout [options]
-  (if-let [timeout (:conn-timeout options)] (str "--connect-timeout " timeout)))
+  (if-let [timeout (:connect-timeout options)] (str "--connect-timeout " timeout)))
+
+(defn- max-time [options]
+  (if-let [timeout (:max-time options)] (str "-m " timeout)))
 
 (def all-options
   [silent
@@ -71,7 +74,8 @@
    no-proxy
    progress-bar
    insecure
-   connect-timeout])
+   connect-timeout
+   max-time])
 
 (defn- apply-options [options]
   (join " " (keep identity (map (fn [f] (f options)) all-options))))
