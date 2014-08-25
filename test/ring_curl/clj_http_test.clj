@@ -16,8 +16,13 @@
              (subject/convert {:method :get}) => (contains {:request-method :get}))
 
        (fact ":url"
-             (subject/convert {:url "https://server-name:8080/some-path/here?query=param"}) => (contains {:scheme       :https
-                                                                                                          :server-name  "server-name"
-                                                                                                          :server-port  8080
-                                                                                                          :uri          "/some-path/here"
-                                                                                                          :query-string "query=param"})))
+             (subject/convert {:url "https://server-name:8080/some-path/here?query=param"}) => (contains {:scheme      :https
+                                                                                                          :server-name "server-name"
+                                                                                                          :server-port 8080
+                                                                                                          :uri         "/some-path/here"}))
+
+       (fact ":form-params"
+             (subject/convert {:request-method :post :form-params {:foo "bar"}}) => (contains {:body "foo=bar"}))
+
+       (fact ":basic-auth"
+             (subject/convert {:basic-auth ["user" "pass"]}) => (contains {:headers {"authorization" "Basic dXNlcjpwYXNz"}})))
