@@ -63,6 +63,9 @@
                            :query-string "page=2&per_page=100"}) => "https://github.com:80/GentlemanHal/ring-curl?page=2&per_page=100"))
 
 (facts "adds headers"
+       (fact "only if they exist"
+             (subject/headers {}) => nil)
+
        (fact "single header"
              (subject/headers {:headers {"date" "Tue, 15 Nov 1994 08:12:31 GMT"}}) => "-H \"Date: Tue, 15 Nov 1994 08:12:31 GMT\"")
 
@@ -74,11 +77,46 @@
              (subject/headers {:headers {"x-custom-header" nil}}) => "-H \"X-Custom-Header;\""))
 
 (facts "adds data"
-       (fact "strings get added as is"
-             (subject/data {:body "a string body"}) => "-d \"a string body\"")
+       (fact "only if there is a body"
+             (subject/data {}) => nil)
 
-       (fact "maps get converted to json"
-             (subject/data {:body {:foo "bar"}}) => "-d \"{\\\"foo\\\":\\\"bar\\\"}\""))
+       (fact "strings get written as is (and not as json otherwise they end up double quoted)"
+             (subject/data {:body "some string"}) => "--data-binary \"some string\"")
+
+       (facts "everything else get written as json by default"
+              (fact "maps"
+                    (subject/data {:body {:foo "bar"}}) => "--data-binary \"{\\\"foo\\\":\\\"bar\\\"}\"")
+
+              (fact "vectors"
+                    (subject/data {:body [{:foo "bar"}]}) => "--data-binary \"[{\\\"foo\\\":\\\"bar\\\"}]\"")
+
+              (fact "lists"
+                    (subject/data {:body (list {:foo "bar"})}) => "--data-binary \"[{\\\"foo\\\":\\\"bar\\\"}]\"")
+
+              (fact "numbers"
+                    (subject/data {:body 1234}) => "--data-binary \"1234\"")
+
+              (fact "booleans"
+                    (subject/data {:body true}) => "--data-binary \"true\""
+                    (subject/data {:body false}) => "--data-binary \"false\""))
+
+       (fact "double quotes get escaped"
+             (subject/data {:body "\"quoted-string\""}) => "--data-binary \"\\\"quoted-string\\\"\"")
+
+       (facts "maps get written as xml if the content type is xml"
+              (facts "application/xml"
+                     (subject/data {:headers {"content-type" "application/xml"}
+                                    :body    {:tag     :foo
+                                              :attrs   {:bas "baz"}
+                                              :content [{:tag :bar}]}}) => "--data-binary \"<foo bas='baz'>\n<bar/>\n</foo>\n\"")
+
+              (fact "text/xml"
+                    (subject/data {:headers {"content-type" "text/xml"}
+                                   :body    {:tag :foo}}) => "--data-binary \"<foo/>\n\"")
+
+              (fact "application/*+xml"
+                    (subject/data {:headers {"content-type" "application/atom+xml"}
+                                   :body    {:tag :foo}}) => "--data-binary \"<foo/>\n\"")))
 
 (facts "curl"
        (fact "simple example with default options"
@@ -89,7 +127,9 @@
                                :uri            "/some/path"
                                :query-string   "a=1&b=2"
                                :headers        {"foo" "bar"
-                                                "bas" "baz"}}) => "curl -v -X GET -H \"Foo: bar\" -H \"Bas: baz\" \"http://server.com:1234/some/path?a=1&b=2\"")
+                                                "bas" "baz"}
+                               :body           "some-content"})
+             => "curl -v -X GET -H \"Foo: bar\" -H \"Bas: baz\" --data-binary \"some-content\" \"http://server.com:1234/some/path?a=1&b=2\"")
 
        (facts "options"
               (fact "verbose"

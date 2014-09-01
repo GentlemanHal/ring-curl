@@ -1,7 +1,15 @@
 (ns ring-curl.core
-  (:require [clojure.string :refer [upper-case blank? join escape]]
+  (:require [clojure.string :refer [upper-case blank? join escape replace]]
             [camel-snake-kebab.core :refer [->HTTP-Header-Case]]
-            [clojure.data.json :as json]))
+            [clojure.data.json :as json]
+            [clojure.xml :as xml])
+  (:refer-clojure :exclude [replace]))
+
+(defn- quoted [& s]
+  (str "\"" (join s) "\""))
+
+(defn- sp [s]
+  (if-not (blank? s) (str " " s)))
 
 (defn method [request]
   (let [request-method (:request-method request)]
@@ -31,20 +39,29 @@
   (str (scheme request) (server-name request) (port request) (path request) (query-string request)))
 
 (defn- map-header [[k v]]
-  (str "-H \"" (->HTTP-Header-Case k) (if (nil? v) ";" (str ": " v)) "\""))
+  (str "-H " (quoted (->HTTP-Header-Case k) (if (nil? v) ";" (str ": " v)))))
 
 (defn headers [request]
-  (join " " (map map-header (:headers request))))
+  (if-let [headers (:headers request)]
+    (join " " (map map-header headers))))
+
+(defn- xml? [request]
+  (if-let [content-type (get-in request [:headers "content-type"])]
+    (or (re-matches #"application/.*?xml" content-type)
+        (= "text/xml" content-type))))
 
 (defn data [request]
   (let [body (:body request)]
-    (str "-d \""
-         (escape
-           (cond
-             (string? body) (:body request)
-             (map? body) (json/write-str body))
-           {\" "\\\""})
-         "\"")))
+    (if-not (nil? body)
+      (str "--data-binary "
+           (quoted
+             (escape
+               (cond
+                 (string? body) body
+                 (xml? request) (with-out-str (xml/emit-element body))
+                 :else (json/write-str body))
+               {\" "\\\""})
+             )))))
 
 (defn- verbose [options]
   (if (:verbose? options) "-v"))
@@ -57,7 +74,7 @@
 
 (defn- no-proxy [options]
   (if-let [hosts (not-empty (:no-proxy options))]
-    (str "--noproxy \"" (join ", " hosts) "\"")))
+    (str "--noproxy " (quoted (join ", " hosts)))))
 
 (defn- progress-bar [options]
   (if (:progress-bar? options) "-#"))
@@ -78,7 +95,7 @@
 
 (defn- output [options]
   (if-let [file (:output options)]
-    (str "-o \"" file "\"")))
+    (str "-o " (quoted file))))
 
 (defn- retry [options]
   (if-let [val (:retry options)]
@@ -108,4 +125,9 @@
   ([request]
    (to-curl request default-options))
   ([request options]
-   (str "curl " (apply-options options) " " (method request) " " (headers request) " \"" (url request) "\"")))
+   (str "curl"
+        (sp (apply-options options))
+        (sp (method request))
+        (sp (headers request))
+        (sp (data request))
+        (sp (quoted (url request))))))
