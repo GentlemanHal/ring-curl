@@ -5,6 +5,11 @@
             [clojure.xml :as xml])
   (:refer-clojure :exclude [replace]))
 
+(def ^:dynamic write-json json/write-str)
+(def ^:dynamic write-xml (fn [body] (with-out-str (xml/emit-element body))))
+
+(def escaped-quote "\\\"")
+
 (defn- quoted [& s]
   (str "\"" (join s) "\""))
 
@@ -58,9 +63,9 @@
              (escape
                (cond
                  (string? body) body
-                 (xml? request) (with-out-str (xml/emit-element body))
-                 :else (json/write-str body))
-               {\" "\\\""})
+                 (xml? request) (write-xml body)
+                 :else (write-json body))
+               {\" escaped-quote})
              )))))
 
 (defn- verbose [options]
