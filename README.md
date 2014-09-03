@@ -5,7 +5,7 @@ A Clojure library designed to convert [ring](https://github.com/ring-clojure/rin
 ## Usage
 
 ```clojure
-(:require ring-curl.core :refer :all)
+(:require [ring-curl.core :refer :all])
 
 (to-curl request)
 ```
