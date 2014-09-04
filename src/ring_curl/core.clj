@@ -100,7 +100,7 @@
 
 (defn- output [options]
   (if-let [file (:output options)]
-    (str "-o " (quoted file))))
+    (str "-o " (quoted file) " --create-dirs")))
 
 (defn- retry [options]
   (if-let [val (:retry options)]

@@ -160,7 +160,7 @@
                     (subject/to-curl {} {:no-buffer? true}) => (contains " -N "))
 
               (fact "output"
-                    (subject/to-curl {} {:output "some-file.txt"}) => (contains " -o \"some-file.txt\" "))
+                    (subject/to-curl {} {:output "some-file.txt"}) => (contains " -o \"some-file.txt\" --create-dirs "))
 
               (fact "retry"
                     (subject/to-curl {} {:retry 3}) => (contains " --retry 3 "))))
