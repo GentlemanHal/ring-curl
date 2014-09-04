@@ -2,14 +2,6 @@
   (:require [midje.sweet :refer :all]
             [ring-curl.core :as subject]))
 
-;The standard keys are:
-;
-;:remote-addr The IP address of the client or the last proxy that sent the request.
-;:content-type The MIME type of the request body, if known.
-;:content-length The number of bytes in the request body, if known.
-;:character-encoding The name of the character encoding used in the request body, if known.
-;:body An InputStream for the request body, if present.
-
 (facts "adds the request method"
        (fact "converted to uppercase"
              (subject/method {:request-method :get}) => "-X GET"
@@ -163,4 +155,7 @@
                     (subject/to-curl {} {:output "some-file.txt"}) => (contains " -o \"some-file.txt\" --create-dirs "))
 
               (fact "retry"
-                    (subject/to-curl {} {:retry 3}) => (contains " --retry 3 "))))
+                    (subject/to-curl {} {:retry 3}) => (contains " --retry 3 "))
+
+              (fact "dump headers"
+                    (subject/to-curl {} {:dump-headers "some-other-file.txt"}) => (contains " -D \"some-other-file.txt\" "))))

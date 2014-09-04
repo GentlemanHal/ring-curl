@@ -11,7 +11,7 @@
 (def escaped-quote "\\\"")
 
 (defn- quoted [& s]
-  (str "\"" (join s) "\""))
+  (str "\"" (escape (join s) {\" escaped-quote}) "\""))
 
 (defn- sp [s]
   (if-not (blank? s) (str " " s)))
@@ -60,12 +60,10 @@
     (if-not (nil? body)
       (str "--data-binary "
            (quoted
-             (escape
-               (cond
-                 (string? body) body
-                 (xml? request) (write-xml body)
-                 :else (write-json body))
-               {\" escaped-quote})
+             (cond
+               (string? body) body
+               (xml? request) (write-xml body)
+               :else (write-json body))
              )))))
 
 (defn- verbose [options]
@@ -106,6 +104,10 @@
   (if-let [val (:retry options)]
     (str "--retry " val)))
 
+(defn- dump-headers [options]
+  (if-let [file (:dump-headers options)]
+    (str "-D " (quoted file))))
+
 (def all-options
   [very-silent
    silent
@@ -117,7 +119,8 @@
    max-time
    no-buffer
    output
-   retry])
+   retry
+   dump-headers])
 
 (defn- apply-options [options]
   (join " " (keep identity (map (fn [f] (f options)) all-options))))
