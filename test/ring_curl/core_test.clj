@@ -162,3 +162,10 @@
 
               (fact "dump headers"
                     (subject/to-curl {} {:dump-headers "some-other-file.txt"}) => (contains " -D \"some-other-file.txt\" "))))
+
+(facts "rebinding allows custom writers"
+       (fact "write-json can be bound to another function"
+             (binding [subject/write-json identity] (subject/write-json ..body..)) => ..body..)
+
+       (fact "write-xml can be bound to another function"
+             (binding [subject/write-xml identity] (subject/write-xml ..body..)) => ..body..))
