@@ -17,8 +17,8 @@
   (if-not (blank? s) (str " " s)))
 
 (defn method [request]
-  (let [request-method (:request-method request)]
-    (str "-X " (upper-case (if (nil? request-method) "get" (name request-method))) (if (= :head request-method) " --head"))))
+  (let [request-method (or (:request-method request) :get)]
+    (str "-X " (upper-case (name request-method)) (if (= :head request-method) " --head"))))
 
 (defn- scheme [request]
   (let [s (:scheme request)]
