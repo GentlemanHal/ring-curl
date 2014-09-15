@@ -6,8 +6,6 @@ A Clojure library designed to convert [ring](https://github.com/ring-clojure/rin
 
 `ring-curl` is available as a Maven artifact from [Clojars](http://clojars.org/ring-curl).
 
-[![Clojars Project](http://clojars.org/ring-curl/latest-version.svg)](http://clojars.org/ring-curl)
-
 ## Usage
 
 ```clojure
