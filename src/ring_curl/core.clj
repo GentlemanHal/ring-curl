@@ -5,7 +5,7 @@
             [clojure.xml :as xml])
   (:refer-clojure :exclude [replace]))
 
-(def ^:dynamic write-json json/write-str)
+(def ^:dynamic write-json (fn [body] (json/write-str body :escape-slash false)))
 (def ^:dynamic write-xml (fn [body] (with-out-str (xml/emit-element body))))
 
 (def escaped-quote "\\\"")

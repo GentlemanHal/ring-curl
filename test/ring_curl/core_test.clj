@@ -90,7 +90,10 @@
 
               (fact "booleans"
                     (subject/data {:body true}) => "--data-binary \"true\""
-                    (subject/data {:body false}) => "--data-binary \"false\""))
+                    (subject/data {:body false}) => "--data-binary \"false\"")
+
+              (fact "forward slashes are not escaped"
+                    (subject/data {:body {:foo "/"}}) => "--data-binary \"{\\\"foo\\\":\\\"/\\\"}\""))
 
        (fact "double quotes get escaped"
              (subject/data {:body "\"quoted-string\""}) => "--data-binary \"\\\"quoted-string\\\"\"")
