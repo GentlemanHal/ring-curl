@@ -17,6 +17,10 @@ It's main purpose is in debugging applications, as it easily allows you to repla
 (ring-curl/to-curl request)
 ```
 
+### clj-http
+
+If you use [clj-http](https://github.com/dakrone/clj-http) you can use the `convert` function under the `ring-curl.clj-http` namespace to convert it to a ring request. This will allow it to be printed correctly as curl by the `core` namespace.
+
 ## License
 
 Copyright © 2014 Christopher Martin
