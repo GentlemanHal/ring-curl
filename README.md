@@ -1,10 +1,12 @@
-# ring-curl [![Clojars Project](http://clojars.org/ring-curl/latest-version.svg)](http://clojars.org/ring-curl)
+# ring-curl
 
 A Clojure library designed to convert [ring](https://github.com/ring-clojure/ring/wiki/Concepts) requests into [cURL](http://curl.haxx.se/docs/manpage.html) commands.
 
 ## Installation
 
 `ring-curl` is available as a Maven artifact from [Clojars](http://clojars.org/ring-curl).
+
+[![Clojars Project](http://clojars.org/ring-curl/latest-version.svg)](http://clojars.org/ring-curl)
 
 ## Usage
 
