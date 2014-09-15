@@ -20,6 +20,6 @@
   "Converts the given clj-http request to a ring request by calling some of the default clj-http middleware."
   [request]
   (reduce (fn [request middleware-fn]
-            ((middleware-fn (fn [x] x)) request))
+            ((middleware-fn identity) request))
           request
           middleware))
