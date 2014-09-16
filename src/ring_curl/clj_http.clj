@@ -8,7 +8,6 @@
    wrap-oauth
    wrap-user-info
    wrap-url
-   wrap-input-coercion
    wrap-accept
    wrap-accept-encoding
    wrap-content-type
