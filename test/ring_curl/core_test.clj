@@ -66,7 +66,10 @@
                                          "accept-language" "en-GB"}}) => "-H \"Accept-Charset: utf-8\" -H \"Accept-Language: en-GB\"")
 
        (fact "headers with no value are added with a semi-colon"
-             (subject/headers {:headers {"x-custom-header" nil}}) => "-H \"X-Custom-Header;\""))
+             (subject/headers {:headers {"x-custom-header" nil}}) => "-H \"X-Custom-Header;\"")
+
+       (fact "keywords are allowed"
+             (subject/headers {:headers {:content-type "application/json"}}) => "-H \"Content-Type: application/json\""))
 
 (facts "adds data"
        (fact "only if there is a body"

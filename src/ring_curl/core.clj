@@ -44,7 +44,7 @@
   (str (scheme request) (server-name request) (port request) (path request) (query-string request)))
 
 (defn- map-header [[k v]]
-  (str "-H " (quoted (->HTTP-Header-Case k) (if (nil? v) ";" (str ": " v)))))
+  (str "-H " (quoted (->HTTP-Header-Case (name k)) (if (nil? v) ";" (str ": " v)))))
 
 (defn headers [request]
   (if-let [headers (:headers request)]
