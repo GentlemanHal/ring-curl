@@ -1,6 +1,5 @@
 (ns ring-curl.core
   (:require [clojure.string :refer [upper-case blank? join escape replace]]
-            [camel-snake-kebab.core :refer [->HTTP-Header-Case]]
             [clojure.data.json :as json]
             [clojure.xml :as xml])
   (:refer-clojure :exclude [replace]))
@@ -44,7 +43,7 @@
   (str (scheme request) (server-name request) (port request) (path request) (query-string request)))
 
 (defn- map-header [[k v]]
-  (str "-H " (quoted (->HTTP-Header-Case (name k)) (if (nil? v) ";" (str ": " v)))))
+  (str "-H " (quoted (name k) (if (nil? v) ";" (str ": " v)))))
 
 (defn headers [request]
   (if-let [headers (:headers request)]

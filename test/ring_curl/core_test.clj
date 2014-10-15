@@ -59,17 +59,17 @@
              (subject/headers {}) => nil)
 
        (fact "single header"
-             (subject/headers {:headers {"date" "Tue, 15 Nov 1994 08:12:31 GMT"}}) => "-H \"Date: Tue, 15 Nov 1994 08:12:31 GMT\"")
+             (subject/headers {:headers {"date" "Tue, 15 Nov 1994 08:12:31 GMT"}}) => "-H \"date: Tue, 15 Nov 1994 08:12:31 GMT\"")
 
        (fact "multiple headers"
              (subject/headers {:headers {"accept-charset"  "utf-8"
-                                         "accept-language" "en-GB"}}) => "-H \"Accept-Charset: utf-8\" -H \"Accept-Language: en-GB\"")
+                                         "accept-language" "en-GB"}}) => "-H \"accept-charset: utf-8\" -H \"accept-language: en-GB\"")
 
        (fact "headers with no value are added with a semi-colon"
-             (subject/headers {:headers {"x-custom-header" nil}}) => "-H \"X-Custom-Header;\"")
+             (subject/headers {:headers {"x-custom-header" nil}}) => "-H \"x-custom-header;\"")
 
        (fact "keywords are allowed"
-             (subject/headers {:headers {:content-type "application/json"}}) => "-H \"Content-Type: application/json\""))
+             (subject/headers {:headers {:content-type "application/json"}}) => "-H \"content-type: application/json\""))
 
 (facts "adds data"
        (fact "only if there is a body"
@@ -127,7 +127,7 @@
                                :headers        {"foo" "bar"
                                                 "bas" "baz"}
                                :body           "some-content"})
-             => "curl -v -X GET -H \"Foo: bar\" -H \"Bas: baz\" --data-binary \"some-content\" \"http://server.com:1234/some/path?a=1&b=2\"")
+             => "curl -v -X GET -H \"foo: bar\" -H \"bas: baz\" --data-binary \"some-content\" \"http://server.com:1234/some/path?a=1&b=2\"")
 
        (facts "options"
               (fact "verbose"
