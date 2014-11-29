@@ -1,4 +1,4 @@
-# ring-curl [![Build Status](https://travis-ci.org/GentlemanHal/ring-curl.svg?branch=master)](https://travis-ci.org/GentlemanHal/ring-curl)
+# ring-curl [![Build Status](https://snap-ci.com/GentlemanHal/ring-curl/branch/master/build_image)](https://snap-ci.com/GentlemanHal/ring-curl/branch/master)
 
 A Clojure library designed to convert [ring](https://github.com/ring-clojure/ring/wiki/Concepts) requests into [cURL](http://curl.haxx.se/docs/manpage.html) commands.
 
