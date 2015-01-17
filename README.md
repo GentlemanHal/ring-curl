@@ -12,7 +12,7 @@ It's main purpose is in debugging applications, as it easily allows you to repla
 
 ```clojure
 (ns your-app.core
-  (:require [ring-curl.core :as :ring-curl]))
+  (:require [ring-curl.core :as ring-curl]))
 
 (ring-curl/to-curl request)
 ```
