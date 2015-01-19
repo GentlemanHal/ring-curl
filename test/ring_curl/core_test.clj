@@ -73,7 +73,10 @@
 
 (facts "adds data"
        (fact "only if there is a body"
-             (subject/data {}) => nil)
+             (subject/data {:body nil}) => nil
+             (subject/data {:body ""}) => nil
+             (subject/data {:body {}}) => nil
+             (subject/data {:body []}) => nil)
 
        (fact "strings get written as is (and not as json otherwise they end up double quoted)"
              (subject/data {:body "some string"}) => "--data-binary \"some string\"")
@@ -120,7 +123,11 @@
        (fact "form-params get used if the content type is application/x-www-form-urlencoded"
              (subject/form {:headers     {"content-type" "application/x-www-form-urlencoded"}
                             :form-params {:foo  "bar"
-                                          "bas" "baz"}}) => "--data-urlencode \"bas=baz\" --data-urlencode \"foo=bar\""))
+                                          "bas" "baz"}}) => "--data-urlencode \"bas=baz\" --data-urlencode \"foo=bar\"")
+
+       (fact "only if there are form-params"
+             (subject/form {:headers     {"content-type" "application/x-www-form-urlencoded"}
+                            :form-params {}}) => nil))
 
 (facts "curl"
        (fact "simple example with default options"

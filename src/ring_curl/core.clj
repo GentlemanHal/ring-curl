@@ -15,6 +15,11 @@
 (defn- sp [s]
   (if-not (blank? s) (str " " s)))
 
+(defn- missing? [val]
+  (or (nil? val)
+      (and (string? val) (blank? val))
+      (and (coll? val) (empty? val))))
+
 (defn method [request]
   (let [request-method (or (:request-method request) :get)]
     (str "-X " (upper-case (name request-method)) (if (= :head request-method) " --head"))))
@@ -66,15 +71,12 @@
   (str "--data-urlencode " (quoted (name key) "=" val)))
 
 (defn- write-form [request]
-  (join " " (map write-form-entry (:form-params request))))
+  (let [params (:form-params request)]
+    (if-not (missing? params)
+      (join " " (map write-form-entry params)))))
 
 (defn- data-binary [data]
-  (if-not (nil? data)
-    (str "--data-binary " (quoted data))))
-
-(defn- missing? [body]
-  (or (nil? body)
-      (and (seq? body) (empty? body))))
+  (str "--data-binary " (quoted data)))
 
 (defn form [request]
   (form? request) (write-form request))
