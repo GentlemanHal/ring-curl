@@ -61,6 +61,20 @@ The following options can be used to modify the output, see the [curl man page](
 - `:dump-headers`
   A `string` value adds the `-D "<val>"` curl flag to the output.
 
+### Middleware
+
+There is middleware included to automatically log every request as curl.
+
+```clojure
+(require [ring-curl.middleware :refer :all])
+
+(defn handler [request]
+  (response {:foo "bar"}))
+
+(def app
+  (log-as-curl handler))
+```
+
 ### clj-http
 
 If you use [clj-http](https://github.com/dakrone/clj-http) you can use the `convert` function under the `ring-curl.clj-http` namespace to convert it to a ring request. This will allow it to be printed correctly as curl by the `core` namespace.
