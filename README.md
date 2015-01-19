@@ -23,7 +23,8 @@ It's main purpose is in debugging applications, as it easily allows you to repla
 
 ### Options
 
-The following options can be used to modify the output, see the [curl man page](http://curl.haxx.se/docs/manpage.html) for more details about exactly what each option will do.
+The following options can be used to modify the output, see the cURL [man page](http://curl.haxx.se/docs/manpage.html)
+for more details about exactly what each option will do.
 
 - `:verbose?`
   A `truthy` value adds the `-v` curl flag to the output.
@@ -63,7 +64,8 @@ The following options can be used to modify the output, see the [curl man page](
 
 ### Middleware
 
-There is middleware included to automatically log every request as curl.
+There is middleware included to automatically log every request as curl. This middleware should be the last middleware
+in the chain, this will ensure the request has been properly modified by all the other middleware.
 
 ```clojure
 (require [ring-curl.middleware :refer :all])
@@ -77,7 +79,8 @@ There is middleware included to automatically log every request as curl.
 
 ### clj-http
 
-If you use [clj-http](https://github.com/dakrone/clj-http) you can use the `convert` function under the `ring-curl.clj-http` namespace to convert it to a ring request. This will allow it to be printed correctly as curl by the `core` namespace.
+If you use [clj-http](https://github.com/dakrone/clj-http) you can use the `convert` function under the `ring-curl.clj-http`
+namespace to convert it to a ring request. This will allow it to be printed correctly as curl by the `core` namespace.
 
 ## Contributing
 
@@ -86,7 +89,7 @@ if you want your pull request accepted.
 
 ## License
 
-Copyright © 2014 Christopher Martin
+Copyright © 2015 Christopher Martin
 
 Distributed under the Eclipse Public License either version 1.0 or (at
 your option) any later version.

@@ -49,21 +49,44 @@
   (if-let [headers (:headers request)]
     (join " " (map map-header headers))))
 
+(defn- header [request header-key]
+  (if-let [headers (get request :headers)]
+    (or (get headers header-key) (get headers (name header-key)))))
+
 (defn- xml? [request]
-  (if-let [content-type (get-in request [:headers "content-type"])]
+  (if-let [content-type (header request :content-type)]
     (or (re-matches #"application/.*?xml" content-type)
         (= "text/xml" content-type))))
 
+(defn- form? [request]
+  (if-let [content-type (header request :content-type)]
+    (.startsWith content-type "application/x-www-form-urlencoded")))
+
+(defn- write-form-entry [[key val]]
+  (str "--data-urlencode " (quoted (name key) "=" val)))
+
+(defn- write-form [request]
+  (join " " (map write-form-entry (:form-params request))))
+
+(defn- data-binary [data]
+  (if-not (nil? data)
+    (str "--data-binary " (quoted data))))
+
+(defn- missing? [body]
+  (or (nil? body)
+      (and (seq? body) (empty? body))))
+
+(defn form [request]
+  (form? request) (write-form request))
+
 (defn data [request]
   (let [body (:body request)]
-    (if-not (nil? body)
-      (str "--data-binary "
-           (quoted
-             (cond
-               (string? body) body
-               (xml? request) (write-xml body)
-               :else (write-json body))
-             )))))
+    (if-not (missing? body)
+      (data-binary
+        (cond
+          (string? body) body
+          (xml? request) (write-xml body)
+          :else (write-json body))))))
 
 (defn- verbose [options]
   (if (:verbose? options) "-v"))
@@ -122,7 +145,7 @@
    dump-headers])
 
 (defn- apply-options [options]
-  (join " " (keep identity (map (fn [f] (f options)) all-options))))
+  (join " " (keep identity (map #(% options) all-options))))
 
 (def default-options
   {:verbose? true})
@@ -130,11 +153,12 @@
 (defn to-curl
   "Converts the given ring request to a cURL command"
   ([request]
-   (to-curl request default-options))
+    (to-curl request default-options))
   ([request options]
-   (str "curl"
-        (sp (apply-options options))
-        (sp (method request))
-        (sp (headers request))
-        (sp (data request))
-        (sp (quoted (url request))))))
+    (str "curl"
+         (sp (apply-options options))
+         (sp (method request))
+         (sp (headers request))
+         (sp (data request))
+         (sp (form request))
+         (sp (quoted (url request))))))

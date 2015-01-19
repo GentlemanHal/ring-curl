@@ -116,6 +116,12 @@
                     (subject/data {:headers {"content-type" "application/atom+xml"}
                                    :body    {:tag :foo}}) => "--data-binary \"<foo/>\n\"")))
 
+(facts "adds form data"
+       (fact "form-params get used if the content type is application/x-www-form-urlencoded"
+             (subject/form {:headers     {"content-type" "application/x-www-form-urlencoded"}
+                            :form-params {:foo  "bar"
+                                          "bas" "baz"}}) => "--data-urlencode \"bas=baz\" --data-urlencode \"foo=bar\""))
+
 (facts "curl"
        (fact "simple example with default options"
              (subject/to-curl {:request-method :get
