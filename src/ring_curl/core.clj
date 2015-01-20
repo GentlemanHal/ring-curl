@@ -1,7 +1,8 @@
 (ns ring-curl.core
   (:require [clojure.string :refer [upper-case blank? join escape replace]]
             [clojure.data.json :as json]
-            [clojure.xml :as xml])
+            [clojure.xml :as xml]
+            [clojure.tools.logging :as log])
   (:refer-clojure :exclude [replace]))
 
 (def ^:dynamic write-json (fn [body] (json/write-str body :escape-slash false)))
@@ -15,10 +16,12 @@
 (defn- sp [s]
   (if-not (blank? s) (str " " s)))
 
-(defn- missing? [val]
-  (or (nil? val)
-      (and (string? val) (blank? val))
-      (and (coll? val) (empty? val))))
+(defn- writable? [val]
+  (or (and (string? val) (not (blank? val)))
+      (= true val)
+      (= false val)
+      (number? val)
+      (and (coll? val) (not (empty? val)))))
 
 (defn method [request]
   (let [request-method (or (:request-method request) :get)]
@@ -72,21 +75,25 @@
 
 (defn- write-form [request]
   (let [params (:form-params request)]
-    (if-not (missing? params)
+    (if-not (empty? params)
       (join " " (map write-form-entry params)))))
 
 (defn form [request]
   (form? request) (write-form request))
 
+(defn- log-unable-to-write [body]
+  (log/warn "Unable to write the body [" body "], use middleware (such as ring-json) to convert it to a clojure structure if you wanted it output correctly"))
+
 (defn data-binary [request]
   (let [body (:body request)]
-    (if-not (missing? body)
+    (if (writable? body)
       (str "--data-binary "
            (quoted
              (cond
                (string? body) body
                (xml? request) (write-xml body)
-               :else (write-json body)))))))
+               :else (write-json body))))
+      (log-unable-to-write body))))
 
 (defn data [request]
   (or (form request) (data-binary request)))

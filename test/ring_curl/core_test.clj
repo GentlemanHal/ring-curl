@@ -72,13 +72,23 @@
              (subject/headers {:headers {:content-type "application/json"}}) => "-H \"content-type: application/json\""))
 
 (facts "adds data"
-       (facts "binary data"
-              (fact "only if there is a body"
-                    (subject/data-binary {:body nil}) => nil
-                    (subject/data-binary {:body ""}) => nil
-                    (subject/data-binary {:body {}}) => nil
-                    (subject/data-binary {:body []}) => nil)
+       (facts "only if the body is writable"
+              (fact "nil"
+                    (subject/data {:body nil}) => nil)
 
+              (fact "empty string"
+                    (subject/data {:body ""}) => nil)
+
+              (fact "empty map"
+                    (subject/data {:body {}}) => nil)
+
+              (fact "empty vector"
+                    (subject/data {:body []}) => nil)
+
+              (fact "Java object"
+                    (subject/data {:body (Object.)}) => nil))
+
+       (facts "binary data"
               (fact "strings get written as is (and not as json otherwise they end up double quoted)"
                     (subject/data-binary {:body "some string"}) => "--data-binary \"some string\"")
 
