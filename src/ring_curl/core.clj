@@ -75,20 +75,21 @@
     (if-not (missing? params)
       (join " " (map write-form-entry params)))))
 
-(defn- data-binary [data]
-  (str "--data-binary " (quoted data)))
-
 (defn form [request]
   (form? request) (write-form request))
 
-(defn data [request]
+(defn data-binary [request]
   (let [body (:body request)]
     (if-not (missing? body)
-      (data-binary
-        (cond
-          (string? body) body
-          (xml? request) (write-xml body)
-          :else (write-json body))))))
+      (str "--data-binary "
+           (quoted
+             (cond
+               (string? body) body
+               (xml? request) (write-xml body)
+               :else (write-json body)))))))
+
+(defn data [request]
+  (or (form request) (data-binary request)))
 
 (defn- verbose [options]
   (if (:verbose? options) "-v"))
@@ -162,5 +163,4 @@
          (sp (method request))
          (sp (headers request))
          (sp (data request))
-         (sp (form request))
          (sp (quoted (url request))))))

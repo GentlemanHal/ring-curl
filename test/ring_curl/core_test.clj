@@ -72,62 +72,74 @@
              (subject/headers {:headers {:content-type "application/json"}}) => "-H \"content-type: application/json\""))
 
 (facts "adds data"
-       (fact "only if there is a body"
-             (subject/data {:body nil}) => nil
-             (subject/data {:body ""}) => nil
-             (subject/data {:body {}}) => nil
-             (subject/data {:body []}) => nil)
+       (facts "binary data"
+              (fact "only if there is a body"
+                    (subject/data-binary {:body nil}) => nil
+                    (subject/data-binary {:body ""}) => nil
+                    (subject/data-binary {:body {}}) => nil
+                    (subject/data-binary {:body []}) => nil)
 
-       (fact "strings get written as is (and not as json otherwise they end up double quoted)"
-             (subject/data {:body "some string"}) => "--data-binary \"some string\"")
+              (fact "strings get written as is (and not as json otherwise they end up double quoted)"
+                    (subject/data-binary {:body "some string"}) => "--data-binary \"some string\"")
 
-       (facts "everything else get written as json by default"
-              (fact "maps"
-                    (subject/data {:body {:foo "bar"}}) => "--data-binary \"{\\\"foo\\\":\\\"bar\\\"}\"")
+              (facts "everything else get written as json by default"
+                     (fact "maps"
+                           (subject/data-binary {:body {:foo "bar"}}) => "--data-binary \"{\\\"foo\\\":\\\"bar\\\"}\"")
 
-              (fact "vectors"
-                    (subject/data {:body [{:foo "bar"}]}) => "--data-binary \"[{\\\"foo\\\":\\\"bar\\\"}]\"")
+                     (fact "vectors"
+                           (subject/data-binary {:body [{:foo "bar"}]}) => "--data-binary \"[{\\\"foo\\\":\\\"bar\\\"}]\"")
 
-              (fact "lists"
-                    (subject/data {:body (list {:foo "bar"})}) => "--data-binary \"[{\\\"foo\\\":\\\"bar\\\"}]\"")
+                     (fact "lists"
+                           (subject/data-binary {:body (list {:foo "bar"})}) => "--data-binary \"[{\\\"foo\\\":\\\"bar\\\"}]\"")
 
-              (fact "numbers"
-                    (subject/data {:body 1234}) => "--data-binary \"1234\"")
+                     (fact "numbers"
+                           (subject/data-binary {:body 1234}) => "--data-binary \"1234\"")
 
-              (fact "booleans"
-                    (subject/data {:body true}) => "--data-binary \"true\""
-                    (subject/data {:body false}) => "--data-binary \"false\"")
+                     (fact "booleans"
+                           (subject/data-binary {:body true}) => "--data-binary \"true\""
+                           (subject/data-binary {:body false}) => "--data-binary \"false\"")
 
-              (fact "forward slashes are not escaped"
-                    (subject/data {:body {:foo "/"}}) => "--data-binary \"{\\\"foo\\\":\\\"/\\\"}\""))
+                     (fact "forward slashes are not escaped"
+                           (subject/data-binary {:body {:foo "/"}}) => "--data-binary \"{\\\"foo\\\":\\\"/\\\"}\""))
 
-       (fact "double quotes get escaped"
-             (subject/data {:body "\"quoted-string\""}) => "--data-binary \"\\\"quoted-string\\\"\"")
+              (fact "double quotes get escaped"
+                    (subject/data-binary {:body "\"quoted-string\""}) => "--data-binary \"\\\"quoted-string\\\"\"")
 
-       (facts "maps get written as xml if the content type is xml"
-              (facts "application/xml"
-                     (subject/data {:headers {"content-type" "application/xml"}
-                                    :body    {:tag     :foo
-                                              :attrs   {:bas "baz"}
-                                              :content [{:tag :bar}]}}) => "--data-binary \"<foo bas='baz'>\n<bar/>\n</foo>\n\"")
+              (facts "maps get written as xml if the content type is xml"
+                     (facts "application/xml"
+                            (subject/data-binary {:headers {"content-type" "application/xml"}
+                                                  :body    {:tag     :foo
+                                                            :attrs   {:bas "baz"}
+                                                            :content [{:tag :bar}]}}) => "--data-binary \"<foo bas='baz'>\n<bar/>\n</foo>\n\"")
 
-              (fact "text/xml"
-                    (subject/data {:headers {"content-type" "text/xml"}
-                                   :body    {:tag :foo}}) => "--data-binary \"<foo/>\n\"")
+                     (fact "text/xml"
+                           (subject/data-binary {:headers {"content-type" "text/xml"}
+                                                 :body    {:tag :foo}}) => "--data-binary \"<foo/>\n\"")
 
-              (fact "application/*+xml"
-                    (subject/data {:headers {"content-type" "application/atom+xml"}
-                                   :body    {:tag :foo}}) => "--data-binary \"<foo/>\n\"")))
+                     (fact "application/*+xml"
+                           (subject/data-binary {:headers {"content-type" "application/atom+xml"}
+                                                 :body    {:tag :foo}}) => "--data-binary \"<foo/>\n\"")))
 
-(facts "adds form data"
-       (fact "form-params get used if the content type is application/x-www-form-urlencoded"
-             (subject/form {:headers     {"content-type" "application/x-www-form-urlencoded"}
-                            :form-params {:foo  "bar"
-                                          "bas" "baz"}}) => "--data-urlencode \"bas=baz\" --data-urlencode \"foo=bar\"")
+       (facts "form data"
+              (fact "form-params get used if the content type is application/x-www-form-urlencoded"
+                    (subject/form {:headers     {"content-type" "application/x-www-form-urlencoded"}
+                                   :form-params {:foo  "bar"
+                                                 "bas" "baz"}}) => "--data-urlencode \"bas=baz\" --data-urlencode \"foo=bar\"")
 
-       (fact "only if there are form-params"
-             (subject/form {:headers     {"content-type" "application/x-www-form-urlencoded"}
-                            :form-params {}}) => nil))
+              (fact "only if there are form-params"
+                    (subject/form {:headers     {"content-type" "application/x-www-form-urlencoded"}
+                                   :form-params {}}) => nil))
+
+       (fact "only adds form data if it exists"
+             (subject/data ..request..) => ..data..
+             (provided
+               (subject/form ..request..) => ..data..))
+
+       (fact "only adds binary data if there is no form data"
+             (subject/data ..request..) => ..binary-data..
+             (provided
+               (subject/form ..request..) => nil
+               (subject/data-binary ..request..) => ..binary-data..)))
 
 (facts "curl"
        (fact "simple example with default options"

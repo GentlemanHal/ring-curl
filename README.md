@@ -11,8 +11,7 @@ It's main purpose is in debugging applications, as it easily allows you to repla
 ## Usage
 
 ```clojure
-(ns your-app.core
-  (:require [ring-curl.core :as ring-curl]))
+(:require [ring-curl.core :as ring-curl])
 
 (ring-curl/to-curl request)
 
@@ -77,10 +76,34 @@ in the chain, this will ensure the request has been properly modified by all the
   (log-as-curl handler))
 ```
 
+### Custom writers
+
+You can replace the xml and json writers with your own by binding:
+
+```clojure
+(:require [ring-curl.core :as ring-curl])
+
+(binding [ring-curl/write-json my-custom-function]
+  (ring-curl/to-curl request))
+
+(binding [ring-curl/write-xml my-custom-function]
+  (ring-curl/to-curl request))
+```
+
 ### clj-http
 
 If you use [clj-http](https://github.com/dakrone/clj-http) you can use the `convert` function under the `ring-curl.clj-http`
 namespace to convert it to a ring request. This will allow it to be printed correctly as curl by the `core` namespace.
+
+### Json Exception
+
+```java
+java.lang.Exception: Don't know how to write JSON of class some.class
+```
+
+If you see the above exception it is because we try and write the body by json if it isn't a `string`, `xml` or posted
+`form` data. To write the body as json it needs to have been converted to a clojure structure such as a map already.
+The easiest way to do this is to use middleware like [ring-json](https://github.com/ring-clojure/ring-json).
 
 ## Contributing
 
