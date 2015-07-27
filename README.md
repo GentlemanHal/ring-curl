@@ -73,7 +73,7 @@ in the chain, this will ensure the request has been properly modified by all the
   (response {:foo "bar"}))
 
 (def app
-  (log-as-curl handler))
+  (wrap-curl-logging handler))
 ```
 
 ### Custom writers
