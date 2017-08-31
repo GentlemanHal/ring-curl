@@ -1,4 +1,4 @@
-# ring-curl [![Build Status](https://snap-ci.com/GentlemanHal/ring-curl/branch/master/build_image)](https://snap-ci.com/GentlemanHal/ring-curl/branch/master)
+# ring-curl [![CircleCI](https://circleci.com/gh/GentlemanHal/ring-curl.svg?style=svg)](https://circleci.com/gh/GentlemanHal/ring-curl)
 
 A Clojure library designed to convert [ring](https://github.com/ring-clojure/ring/wiki/Concepts) requests into [cURL](http://curl.haxx.se/docs/manpage.html) commands.
 
@@ -102,7 +102,7 @@ if you want your pull request accepted.
 
 ## License
 
-Copyright © 2015 Christopher Martin
+Copyright © 2017 Christopher Martin
 
 Distributed under the Eclipse Public License either version 1.0 or (at
 your option) any later version.
