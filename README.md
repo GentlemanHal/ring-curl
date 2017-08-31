@@ -1,4 +1,4 @@
-# ring-curl [![CircleCI](https://circleci.com/gh/GentlemanHal/ring-curl.svg?style=svg)](https://circleci.com/gh/GentlemanHal/ring-curl)
+# ring-curl [![CircleCI](https://circleci.com/gh/GentlemanHal/ring-curl.svg?style=svg)](https://circleci.com/gh/GentlemanHal/ring-curl) [![Clojars Project](https://img.shields.io/clojars/v/ring-curl.svg)](https://clojars.org/ring-curl)
 
 A Clojure library designed to convert [ring](https://github.com/ring-clojure/ring/wiki/Concepts) requests into [cURL](http://curl.haxx.se/docs/manpage.html) commands.
 
