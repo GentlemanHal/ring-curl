@@ -134,7 +134,7 @@
               (fact "form-params get used if the content type is application/x-www-form-urlencoded"
                     (subject/form {:headers     {"content-type" "application/x-www-form-urlencoded"}
                                    :form-params {:foo  "bar"
-                                                 "bas" "baz"}}) => "--data-urlencode \"bas=baz\" --data-urlencode \"foo=bar\"")
+                                                 "bas" "baz"}}) => "--data-urlencode \"foo=bar\" --data-urlencode \"bas=baz\"")
 
               (fact "only if there are form-params"
                     (subject/form {:headers     {"content-type" "application/x-www-form-urlencoded"}
