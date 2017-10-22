@@ -1,6 +1,6 @@
 (ns ring-curl.clj-http
   (:require [clj-http.client :refer :all])
-  (:refer-clojure :exclude [get]))
+  (:refer-clojure :exclude [get update]))
 
 (def middleware
   [wrap-query-params
