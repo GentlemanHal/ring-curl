@@ -8,6 +8,9 @@
   :javac-options ["-Dclojure.compiler.direct-linking=true"]
   :aliases {"test" ["midje"]
             "lint" ["eastwood"]}
+  :repositories [["releases" {:url      "https://clojars.org/repo"
+                              :username :env/clojars_username
+                              :password :env/clojars_password}]]
   :profiles {:dev {:plugins      [[lein-midje "3.2.1"]
                                   [lein-ancient "0.6.15"]
                                   [jonase/eastwood "0.2.8"]]
