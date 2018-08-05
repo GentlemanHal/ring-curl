@@ -5,7 +5,7 @@ echo "Creating a GitHub release with tag [${VERSION}]"
 responseJson=$(curl \
   -u ${GITHUB_USERNAME}:${GITHUB_TOKEN} \
   -H "Content-Type: application/vnd.github.v3+json" \
-  -d "{\"tag_name\": \"v${VERSION}\", \"target_commitish\": \"master\", \"name\": \"${VERSION}\", \"draft\": true, \"prerelease\": false}" \
+  -d "{\"tag_name\": \"v${VERSION}\", \"target_commitish\": \"master\", \"name\": \"v${VERSION}\", \"draft\": true, \"prerelease\": false}" \
   https://api.github.com/repos/GentlemanHal/ring-curl/releases)
 
 echo "Got response [${responseJson}]"
