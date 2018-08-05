@@ -32,13 +32,13 @@ jobs:
           path: ./target/surefire-reports
 
       - store_artifacts:
-          path: ./target/ring-curl.jar
+          path: ./target/jar
 
       - persist_to_workspace:
           root: .
           paths:
             - ./ci/*
-            - ./target/ring-curl.jar
+            - ./target/jar/*
 
   release:
     working_directory: ~/ring-curl
