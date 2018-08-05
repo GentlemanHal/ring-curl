@@ -39,6 +39,8 @@ jobs:
           paths:
             - ./ci/*
             - ./target/jar/*
+            - ./lein.sh
+            - ./project.clj
 
   release:
     working_directory: ~/ring-curl
