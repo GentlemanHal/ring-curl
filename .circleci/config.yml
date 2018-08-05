@@ -18,6 +18,8 @@ jobs:
           name: build
           command: |
             ./ci/compile.sh
+            mkdir target/jar
+            mv target/*.jar target/jar/
 
       - save_cache:
           key: v1-ring-curl-{{ checksum "project.clj" }}
@@ -55,6 +57,10 @@ jobs:
       - run:
           name: export version
           command: ./ci/export-version.sh
+
+      - run:
+          name: move jar back to target
+          command: mv target/jar/*.jar target/
 
       - run:
           name: create release on GitHub
