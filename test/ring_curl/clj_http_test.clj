@@ -21,6 +21,9 @@
                                                                                                           :server-port 8080
                                                                                                           :uri         "/some-path/here"}))
 
+       (fact ":query-params"
+             (subject/convert {:url "https://server-name" :query-params {:foo "bar"}}) => (contains {:query-string "foo=bar"}))
+
        (fact ":form-params"
              (subject/convert {:request-method :post :form-params {:foo "bar"}}) => (contains {:body "foo=bar"}))
 

@@ -3,8 +3,7 @@
   (:refer-clojure :exclude [get update]))
 
 (def middleware
-  [wrap-query-params
-   wrap-basic-auth
+  [wrap-basic-auth
    wrap-oauth
    wrap-user-info
    wrap-url
@@ -13,7 +12,8 @@
    wrap-content-type
    wrap-form-params
    wrap-nested-params
-   wrap-method])
+   wrap-method
+   wrap-query-params])
 
 (defn convert
   "Converts the given clj-http request to a ring request by calling some of the default clj-http middleware."

@@ -1,4 +1,4 @@
-(defproject ring-curl "0.4.0"
+(defproject ring-curl "1.0.0"
   :description "Converts ring requests to cURL commands"
   :url "https://github.com/GentlemanHal/ring-curl"
   :license {:name "Eclipse Public License"
