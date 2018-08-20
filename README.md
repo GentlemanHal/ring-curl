@@ -8,6 +8,8 @@ It's main purpose is in debugging applications, as it easily allows you to repla
 
 `ring-curl` is available as a Maven artifact from [Clojars](http://clojars.org/ring-curl).
 
+**Note:** v1.0.0 is broken on Clojars, see [issue #4](https://github.com/GentlemanHal/ring-curl/issues/4) for more details.
+
 ## Usage
 
 ```clojure
